@@ -22,6 +22,8 @@ public class UserService {
 	
 	static UserDao userDao = new UserDao();
 	static List<String> usernameList = new ArrayList<>();
+	static List<String> fullnameList = new ArrayList<>();
+	static List<String> passwordList = new ArrayList<>();
 	static Map<String, String> usernamePassword = new HashMap<>();
 	static Map<String, String> namePassword = new HashMap<>();
 	static Map<String, String> usernameName = new HashMap<>();
@@ -33,6 +35,58 @@ public class UserService {
 	 * bean
 	 */
 	public static void createUser() {
+//		name
+		Boolean nameExists = false;
+		String fullName = "";
+		
+		System.out.println("-----------------------------------------|");
+		System.out.println("Please enter your first and last name: " );
+		System.out.println("-----------------------------------------|");
+		String fullNameEntry = ScannerUtil.getLine();
+		
+		while(!nameExists) {
+			try(Connection connection = ConnectionUtil.getConnection()){
+				String sql = "Select name FROM useraccounts";
+				PreparedStatement ps = connection.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery();
+				while (rs.next()) {
+					fullnameList.add(rs.getString(1));
+				}
+				if(fullnameList.contains(fullNameEntry)) {
+					
+					System.out.println("-----------------------------------------|");
+					System.out.println("That name is already associated with a");
+					System.out.println("user profile for an Online Account.");
+					System.out.println("You will now be directed to the Main");
+					System.out.println("Menu.  Please login with your username");
+					System.out.println("and password.");
+					System.out.println("-----------------------------------------|");
+					
+					View view = new MainMenu();
+					
+					while(view != null) {
+						view = view.printOptions();
+					}
+					
+				}
+				else {
+					fullName += fullNameEntry;
+					nameExists = true;
+				}
+			
+			
+			
+			
+			}catch(SQLException e) {
+				
+			}
+			
+		}
+		
+		
+		
+		
+		
 //		Username
 		Boolean userExists = false;
 		String userName = "";
@@ -99,12 +153,6 @@ public class UserService {
 
 				}
 		}
-		
-//		name
-		System.out.println("-----------------------------------------|");
-		System.out.println("Please enter your first and last name: " );
-		System.out.println("-----------------------------------------|");
-		String fullName = ScannerUtil.getLine();
 		
 		
 		User user = new User(fullName, password, userName);
@@ -192,7 +240,7 @@ public class UserService {
 							View view = new MainMenu();
 							while(view != null) {
 								view = view.printOptions();
-							}
+						}
 							;
 					}
 					
@@ -231,7 +279,7 @@ public class UserService {
 				ResultSet rs2 = ps2.executeQuery();
 				while (rs2.next()) {
 					namePassword.put(rs2.getString(2), rs2.getString(1));
-					
+					fullnameList.add(rs2.getString(2));
 				}
 						
 				System.out.println("-----------------------------------------|");
@@ -240,36 +288,61 @@ public class UserService {
 
 				String nameEntry = ScannerUtil.getLine();
 			
-				System.out.println("-----------------------------------------|");
-				System.out.println("Please enter your password:");
-				System.out.println("-----------------------------------------|");
-
-				String passwordEntry = ScannerUtil.getLine();
+				if(fullnameList.contains(nameEntry)) {
 				
-				if((namePassword.get(nameEntry).equals(passwordEntry))) {
-					namePassMatch = true;
-					
 					System.out.println("-----------------------------------------|");
-					System.out.println("Your username is:");
-					System.out.println(usernamePassword.get(passwordEntry));
-					System.out.println("You are being redirected to the Login screen.");
-					System.out.println("Please choose the option to enter your login information");
-					System.out.println("and use the username that has been provided.");;
+					System.out.println("Please enter your password:");
 					System.out.println("-----------------------------------------|");
-				}
-				//add method that will give a message if the entries do not exist in the map
-				else if(namePassword.){
+
+					String passwordEntry = ScannerUtil.getLine();
+				
+					if((namePassword.get(nameEntry).equals(passwordEntry))) {
+						namePassMatch = true;
 					
+						System.out.println("-----------------------------------------|");
+						System.out.println("Your username is:");
+						System.out.println(usernamePassword.get(passwordEntry));
+						System.out.println("You are being redirected to the Login screen.");
+						System.out.println("Please choose the option to enter your login information");
+						System.out.println("and use the username that has been provided.");;
+						System.out.println("-----------------------------------------|");
+					}
+				
+					else {
+						System.out.println("-----------------------------------------|");
+						System.out.println("That name and password are not associated to a username.");
+						System.out.println("Please try again.");
+						System.out.println("-----------------------------------------|");
+
+					}
 				}
 				else {
+				
+					System.out.println("That name is not associated with a ");
+					System.out.println("user profile.");
+					
 					System.out.println("-----------------------------------------|");
-					System.out.println("That name and password are not associated to a username.");
-					System.out.println("Please try again.");
+					System.out.println("1. Enter 1 to try again.");
+					System.out.println("0. Return to Main Menu and ");
+					System.out.println("Sign Up for an Online Account.");
 					System.out.println("-----------------------------------------|");
-
+					
+					int selection = ScannerUtil.getNumericChoice(1);
+					
+					switch(selection) {
+					
+						case 1:
+							break;
+						
+						default :
+							View view = new MainMenu();
+							while(view != null) {
+								view = view.printOptions();
+						}
+					}			
+					
+					
 				}
-			
-			
 			}catch(SQLException e){
 				e.printStackTrace();
 				}
@@ -277,7 +350,7 @@ public class UserService {
 
 		
 	}
-	
+
 	
 	public static void retrievePassword() {
 		Boolean nameUserMatch = false;
@@ -290,47 +363,83 @@ public class UserService {
 				ResultSet rs = ps.executeQuery();
 				while (rs.next()) {
 					usernamePassword.put(rs.getString(1), rs.getString(2));
-//					System.out.println(usernamePassword);
+					
 					}
 				String sql2 = "Select username, name FROM useraccounts";
 				PreparedStatement ps2 = connection.prepareStatement(sql2);
 				ResultSet rs2 = ps2.executeQuery();
 				while (rs2.next()) {
 					usernameName.put(rs2.getString(2), rs2.getString(1));
+					fullnameList.add(rs2.getString(2));
 					
 				}
-						
+
 				System.out.println("-----------------------------------------|");
 				System.out.println("Please enter your name:");
 				System.out.println("-----------------------------------------|");
 
-				String nameEntry = ScannerUtil.getLine();
-			
-				System.out.println("-----------------------------------------|");
-				System.out.println("Please enter your username:");
-				System.out.println("-----------------------------------------|");
-
-				String usernameEntry = ScannerUtil.getLine();
+				String nameEntry = ScannerUtil.getLine();				
 				
-				if((usernameName.get(nameEntry).equals(usernameEntry))) {
-					nameUserMatch = true;
+				if(fullnameList.contains(nameEntry)) {
+				
+
+					System.out.println("-----------------------------------------|");
+					System.out.println("Please enter your username:");
+					System.out.println("-----------------------------------------|");
+
+					String usernameEntry = ScannerUtil.getLine();
+
+					
+					
+					//
+					if((usernameName.get(nameEntry).equals(usernameEntry))) {
+						
+						System.out.println("-----------------------------------------|");
+						System.out.println("Your password is:");
+						System.out.println(usernamePassword.get(usernameEntry));
+						System.out.println("You are being redirected to the Login screen.");
+						System.out.println("Please choose the option to enter your login information");
+						System.out.println("and use the username that has been provided.");;
+						System.out.println("-----------------------------------------|");
+						
+						nameUserMatch = true;
+					}
+				
+					else {
+						
+						System.out.println("-----------------------------------------|");
+						System.out.println("That name and username are not associated to a password.");
+						System.out.println("Please try again.");
+						System.out.println("-----------------------------------------|");
+						
+					}
+					
+				}
+				else {
+					
+					System.out.println("That name is not associated with a ");
+					System.out.println("user profile.");
 					
 					System.out.println("-----------------------------------------|");
-					System.out.println("Your password is:");
-					System.out.println(usernamePassword.get(usernameEntry));
-					System.out.println("You are being redirected to the Login screen.");
-					System.out.println("Please choose the option to enter your login information");
-					System.out.println("and use the username that has been provided.");;
+					System.out.println("1. Enter 1 to try again.");
+					System.out.println("0. Return to Main Menu and ");
+					System.out.println("Sign Up for an Online Account.");
 					System.out.println("-----------------------------------------|");
-				}
-				
-				else {
-					System.out.println("-----------------------------------------|");
-					System.out.println("That name and username are not associated to a password.");
-					System.out.println("Please try again.");
-					System.out.println("-----------------------------------------|");
-
-				}
+					
+					int selection = ScannerUtil.getNumericChoice(1);
+					
+					switch(selection) {
+					
+						case 1:
+							break;
+						
+						default :
+							View view = new MainMenu();
+							while(view != null) {
+								view = view.printOptions();
+							}
+						}
+					}
 			
 			
 			}catch(SQLException e){

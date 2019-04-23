@@ -107,6 +107,7 @@ public class UserDao {
 			
 				System.out.println("Your account has been opened!");
 				System.out.println("You will now be taken back to your account summary.");
+				break;
 				
 			case 2:
 				

@@ -21,6 +21,7 @@ public class AccountView implements View {
 		System.out.println("-----------------------------------------|");
 		System.out.println("Welcome " + UserService.userview +"!");
 		System.out.println("Here is a summary of your accounts.");
+		System.out.println("-----------------------------------------|");
 		
 		try(Connection connection = ConnectionUtil.getConnection()){
 			String sql = "select accountnumber, balance\r\n" + 
@@ -46,7 +47,7 @@ public class AccountView implements View {
 			System.out.println("2. Make a deposit.");
 			System.out.println("3. Make a withdrawl.");
 			System.out.println("4. Transfer funds to another account.");
-			System.out.println("5. Return to Main Menu.");
+			System.out.println("5. Log off and return to Main Menu.");
 			System.out.println("-----------------------------------------|");
 
 			
@@ -61,7 +62,12 @@ public class AccountView implements View {
 				return new AccountView();
 			case 4: UserDao.makeTransfer();
 			
-			default: return new MainMenu();
+			default: 
+				View view = new MainMenu();
+			
+				while(view != null) {
+					view = view.printOptions();
+				};
 			
 			}
 		}catch (SQLException e) {

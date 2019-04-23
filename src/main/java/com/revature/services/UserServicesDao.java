@@ -18,7 +18,7 @@ import com.revature.views.LoginView;
 import com.revature.views.MainMenu;
 import com.revature.views.View;
 
-public class UserService {
+public class UserServicesDao {
 	
 	static UserDao userDao = new UserDao();
 	static List<String> usernameList = new ArrayList<>();

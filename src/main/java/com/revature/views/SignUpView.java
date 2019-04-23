@@ -1,11 +1,11 @@
 package com.revature.views;
 
-import com.revature.services.UserService;
+import com.revature.services.UserServicesDao;
 import com.revature.util.ScannerUtil;
 
 public class SignUpView implements View {
 
-	UserService userService = new UserService();
+	UserServicesDao userService = new UserServicesDao();
 
 	public View printOptions() {
 		System.out.println("-----------------------------------------|");
@@ -20,7 +20,7 @@ public class SignUpView implements View {
 
 		switch (selection) {
 		case 1:
-			UserService.createUser();
+			UserServicesDao.createUser();
 			return new MainMenu();
 			
 		default:

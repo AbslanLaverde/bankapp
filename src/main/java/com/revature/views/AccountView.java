@@ -1,5 +1,7 @@
 package com.revature.views;
 
+import com.revature.services.UserServicesDao;
+
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,7 +10,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 import com.revature.daos.UserDao;
-import com.revature.services.UserService;
 import com.revature.util.ConnectionUtil;
 import com.revature.util.ScannerUtil;
 
@@ -19,7 +20,7 @@ public class AccountView implements View {
 	public View printOptions() {
 		System.out.println("\n");
 		System.out.println("-----------------------------------------|");
-		System.out.println("Welcome " + UserService.userview +"!");
+		System.out.println("Welcome " + UserServicesDao.userview +"!");
 		System.out.println("Here is a summary of your accounts.");
 		System.out.println("-----------------------------------------|");
 		
@@ -30,7 +31,7 @@ public class AccountView implements View {
 					"where username = ?;";
 			PreparedStatement ps = connection.prepareStatement(sql);
 			
-			ps.setString(1, UserService.usernameview);
+			ps.setString(1, UserServicesDao.usernameview);
 			
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {

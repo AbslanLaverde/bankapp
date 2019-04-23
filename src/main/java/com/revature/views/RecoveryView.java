@@ -1,11 +1,11 @@
 package com.revature.views;
 
-import com.revature.services.UserService;
+import com.revature.services.UserServicesDao;
 import com.revature.util.ScannerUtil;
 
 public class RecoveryView implements View {
 
-	UserService userService = new UserService();
+	UserServicesDao userService = new UserServicesDao();
 	
 	public View printOptions() {
 		System.out.println("-----------------------------------------|");
@@ -22,10 +22,10 @@ public class RecoveryView implements View {
 		
 		switch(selection) {
 		case 1:
-			UserService.retrieveUsername();
+			UserServicesDao.retrieveUsername();
 			return new LoginView();
 		case 2: 
-			UserService.retrievePassword();
+			UserServicesDao.retrievePassword();
 			return new LoginView();
 		default: return null;
 		}

@@ -1,11 +1,11 @@
 package com.revature.views;
 
-import com.revature.services.UserService;
+import com.revature.services.UserServicesDao;
 import com.revature.util.ScannerUtil;
 
 public class LoginView implements View {
 
-	UserService userService = new UserService();
+	UserServicesDao userService = new UserServicesDao();
 
 	public View printOptions() {
 		System.out.println("-----------------------------------------|");
@@ -21,7 +21,7 @@ public class LoginView implements View {
 
 		switch (selection) {
 		case 1:
-			UserService.loginUser();
+			UserServicesDao.loginUser();
 			return new AccountView();
 		case 2 :
 			return new RecoveryView();

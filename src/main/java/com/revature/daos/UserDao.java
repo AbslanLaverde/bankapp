@@ -10,7 +10,7 @@ import java.util.List;
 
 import com.revature.views.*;
 import com.revature.beans.User;
-import com.revature.services.UserService;
+import com.revature.services.UserServicesDao;
 import com.revature.util.ConnectionUtil;
 
 public class UserDao {
@@ -50,7 +50,7 @@ public class UserDao {
 				if(usernameList.contains(userName)) {
 					System.out.println("That username is unavailable.  Please try again!");	
 					
-					UserService.createUser();
+					UserServicesDao.createUser();
 				}
 			}
 		}
@@ -96,7 +96,7 @@ public class UserDao {
 					while(rs.next()) {
 						accountNumber += rs.getInt(1);
 					}
-					String sql2 = "insert into usertobank (username, accounts) values ('" + UserService.usernameview + "', " + accountNumber + ");";
+					String sql2 = "insert into usertobank (username, accounts) values ('" + UserServicesDao.usernameview + "', " + accountNumber + ");";
 					PreparedStatement ps2 = connection.prepareStatement(sql2);
 					ResultSet rs2 = ps2.executeQuery();
 					
@@ -129,7 +129,7 @@ public class UserDao {
 				
 					case 1:
 						
-						System.out.println("You are currently logged in as " + UserService.usernameview +".");
+						System.out.println("You are currently logged in as " + UserServicesDao.usernameview +".");
 						System.out.println("This user will be designated as the primary account owner.");
 						
 						
@@ -150,7 +150,7 @@ public class UserDao {
 									secondaryList.add(rs.getString(1));
 									secondaryList.add(rs.getString(1).toLowerCase());
 								}
-								if(!secondaryOwnerEntry.equals(UserService.usernameview)) {
+								if(!secondaryOwnerEntry.equals(UserServicesDao.usernameview)) {
 									if(!(secondaryList.contains(secondaryOwnerEntry))) {
 										System.out.println("-----------------------------------------|");
 										System.out.println("That username is not associated to a User Account.");

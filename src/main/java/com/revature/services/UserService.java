@@ -151,7 +151,8 @@ public class UserService {
 					usernameview = userNameEntry;
 					
 					System.out.println("-----------------------------------------|");
-					System.out.println("Login successful!  You will now be taken to your Accounts.");
+					System.out.println("Login successful!  You will now be"); 
+					System.out.println("taken to your Accounts.");
 					System.out.println("-----------------------------------------|");
 				}
 				
@@ -302,21 +303,7 @@ public class UserService {
 	}
 	
 	
-	public static void openAccount() {
-		System.out.println("Open account methods.");
-	}
 	
-	public static void makeDeposit() {
-		System.out.println("Make deposit methods.");
-	}
-	
-	public static void makeWithdrawal() {
-		System.out.println("Make a withdrawal method.");
-	}
-	
-	public static void makeTransfer() {
-		System.out.println("Make a transfer method.");
-	}
 	
 	
 	

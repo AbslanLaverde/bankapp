@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+
+import com.revature.daos.UserDao;
 import com.revature.services.UserService;
 import com.revature.util.ConnectionUtil;
 import com.revature.util.ScannerUtil;
@@ -51,13 +53,13 @@ public class AccountView implements View {
 			int selection = ScannerUtil.getNumericChoice(5);
 			
 			switch(selection) {
-			case 1: UserService.openAccount();
+			case 1: UserDao.openAccount();
 				return new AccountView();
-			case 2: UserService.makeDeposit();
+			case 2: UserDao.makeDeposit();
 				return new AccountView();
-			case 3: UserService.makeWithdrawal();
+			case 3: UserDao.makeWithdrawal();
 				return new AccountView();
-			case 4: UserService.makeTransfer();
+			case 4: UserDao.makeTransfer();
 			
 			default: return new MainMenu();
 			

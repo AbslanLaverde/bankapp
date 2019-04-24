@@ -36,31 +36,6 @@ public class UserDao {
 		return null;
 	}
 	
-	public void usernameVerifier(String userName) {
-		
-		try(Connection connection = ConnectionUtil.getConnection()){
-			String sql = "SELECT username FROM useraccounts";
-			PreparedStatement ps = connection.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();		
-			while (rs.next()) {
-//				System.out.println(rs.getString(1));
-				usernameList.add(rs.getString(1));
-				usernameList.add(rs.getString(1).toLowerCase());
-//				System.out.println(usernameList);
-				if(usernameList.contains(userName)) {
-					System.out.println("That username is unavailable.  Please try again!");	
-					
-					UserServicesDao.createUser();
-				}
-			}
-		}
-		
-		catch (SQLException e) {
-			e.printStackTrace();
-		}
-				
-	}
-	
 	public static void openAccount() {
 		
 		System.out.println("-----------------------------------------|");
@@ -76,7 +51,7 @@ public class UserDao {
 	
 		switch(selection) {
 		
-			case 1:
+			case 1: //individual account opening
 			
 				int accountNumber = 0;
 				double initialDeposit = 0;
@@ -109,7 +84,7 @@ public class UserDao {
 				System.out.println("You will now be taken back to your account summary.");
 				break;
 				
-			case 2:
+			case 2: //joint account opening confimation
 				
 				System.out.println("To open a joint account, both account owners"); 
 				System.out.println("must have access to our online service.");
@@ -127,10 +102,10 @@ public class UserDao {
 			
 				switch(selection2) {
 				
-					case 1:
+					case 1: //joint account creation
 						
 						System.out.println("You are currently logged in as " + UserServicesDao.usernameview +".");
-						System.out.println("This user will be designated as the primary account owner.");
+						System.out.println("This user will be designated as the Primary Account Holder.");
 						
 						
 						Boolean userExists = false;
@@ -138,7 +113,7 @@ public class UserDao {
 						
 						while(!userExists) {
 							System.out.println("-----------------------------------------|");
-							System.out.println("Please enter the username of the secondary account owner:");
+							System.out.println("Please enter the username of the Secondary Account Holder:");
 							System.out.println("-----------------------------------------|");
 							String secondaryOwnerEntry = ScannerUtil.getLine();
 
@@ -150,7 +125,11 @@ public class UserDao {
 									secondaryList.add(rs.getString(1));
 									secondaryList.add(rs.getString(1).toLowerCase());
 								}
+							}catch(SQLException e) {
+								e.printStackTrace();
+							}
 								if(!secondaryOwnerEntry.equals(UserServicesDao.usernameview)) {
+									
 									if(!(secondaryList.contains(secondaryOwnerEntry))) {
 										System.out.println("-----------------------------------------|");
 										System.out.println("That username is not associated to a User Account.");
@@ -162,11 +141,15 @@ public class UserDao {
 										int selection3 = ScannerUtil.getNumericChoice(1);
 									
 										switch(selection3) {
-											case 1:
+											case 1: //re-enter username
 												System.out.println("");
 												break;
-											case 0:
-												return;
+											case 0: //return to main menu
+												View view = new MainMenu();
+												
+												while(view != null) {
+													view = view.printOptions();
+												}
 									
 										}
 
@@ -183,26 +166,23 @@ public class UserDao {
 									System.out.println("is not a valid entry.");
 									
 								}
-							}catch(SQLException e) {
-								e.printStackTrace();
-							}
-							
-							
-							
-							
 							
 						}
 
 						
+						System.out.println(secondaryOwner);
+						break;
 						
-						;
-					case 0:
-						return;
-				
+					case 0: //return to main menu from joint account opening confirmation
+						View view = new MainMenu();
+						
+						while(view != null) {
+							view = view.printOptions();
+						}
 				}
 				
 				
-			case 0:
+			case 0: //return to account view from the account type selection screen
 				return; 
 				
 		}

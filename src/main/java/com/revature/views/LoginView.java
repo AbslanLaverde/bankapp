@@ -6,7 +6,9 @@ import com.revature.util.ScannerUtil;
 public class LoginView implements View {
 
 	UserServicesDao userService = new UserServicesDao();
-
+	
+	
+	
 	public View printOptions() {
 		System.out.println("-----------------------------------------|");
 		System.out.println("Login to your account!");
@@ -22,7 +24,11 @@ public class LoginView implements View {
 		switch (selection) {
 		case 1:
 			UserServicesDao.loginUser();
-			return new AccountView();
+			if(!UserServicesDao.loginSuccessful) {
+				return new MainMenu();
+			}else if(UserServicesDao.loginSuccessful){
+				return new AccountView();
+			}
 		case 2 :
 			return new RecoveryView();
 		default:

@@ -5,10 +5,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.revature.beans.User;
 import com.revature.daos.UserDao;
@@ -21,14 +21,15 @@ import com.revature.views.View;
 public class UserServicesDao {
 	
 	static UserDao userDao = new UserDao();
-	static List<String> usernameList = new ArrayList<>();
-	static List<String> fullnameList = new ArrayList<>();
-	static List<String> passwordList = new ArrayList<>();
+	static Set<String> usernameSet = new HashSet<>();
+	static Set<String> fullnameSet = new HashSet<>();
+	static Set<String> passwordSet = new HashSet<>();
 	static Map<String, String> usernamePassword = new HashMap<>();
 	static Map<String, String> namePassword = new HashMap<>();
 	static Map<String, String> usernameName = new HashMap<>();
 	public static String userview = "";
 	public static String usernameview = "";
+	public static Boolean loginSuccessful = false;
 	
 	/**
 	 * Handles creation workflow for User
@@ -46,13 +47,16 @@ public class UserServicesDao {
 		
 		while(!nameExists) {
 			try(Connection connection = ConnectionUtil.getConnection()){
-				String sql = "Select name FROM useraccounts";
-				PreparedStatement ps = connection.prepareStatement(sql);
-				ResultSet rs = ps.executeQuery();
-				while (rs.next()) {
-					fullnameList.add(rs.getString(1));
+				String sql3 = "Select name FROM useraccounts";
+				PreparedStatement ps = connection.prepareStatement(sql3);
+				ResultSet rs3 = ps.executeQuery();
+				while (rs3.next()) {
+					fullnameSet.add(rs3.getString(1));
 				}
-				if(fullnameList.contains(fullNameEntry)) {
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+				if(fullnameSet.contains(fullNameEntry)) {
 					
 					System.out.println("-----------------------------------------|");
 					System.out.println("That name is already associated with a");
@@ -74,18 +78,7 @@ public class UserServicesDao {
 					nameExists = true;
 				}
 			
-			
-			
-			
-			}catch(SQLException e) {
-				
-			}
-			
 		}
-		
-		
-		
-		
 		
 //		Username
 		Boolean userExists = false;
@@ -102,11 +95,14 @@ public class UserServicesDao {
 				PreparedStatement ps = connection.prepareStatement(sql);
 				ResultSet rs = ps.executeQuery();
 				while (rs.next()) {
-					usernameList.add(rs.getString(1));
-					usernameList.add(rs.getString(1).toLowerCase());
+					usernameSet.add(rs.getString(1));
+					usernameSet.add(rs.getString(1).toLowerCase());
 				}
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
 				
-				if(usernameList.contains(userNameEntry)) {
+				if(usernameSet.contains(userNameEntry)) {
 					System.out.println("-----------------------------------------|");
 					System.out.println("That username is unavailable.  Please try again!");	
 					System.out.println("-----------------------------------------|");
@@ -118,9 +114,7 @@ public class UserServicesDao {
 					userExists = true;
 				}
 				
-			}catch(SQLException e) {
-				e.printStackTrace();
-			}
+			
 		}
 		
 //		Password
@@ -166,10 +160,13 @@ public class UserServicesDao {
 		System.out.println("-----------------------------------------|");
 	}
 	
+	
+	
 	public static void loginUser() {
 		Boolean userPassMatch = false;
+		int failedAttempt = 0;
 		
-		while(!userPassMatch) {
+		while((!userPassMatch)&&(failedAttempt < 3)) {
 		
 			try(Connection connection = ConnectionUtil.getConnection()){
 				String sql = "SELECT username, password FROM useraccounts";
@@ -177,7 +174,7 @@ public class UserServicesDao {
 				ResultSet rs = ps.executeQuery();
 				while (rs.next()) {
 					usernamePassword.put(rs.getString(1), rs.getString(2));
-					usernameList.add(rs.getString(1));
+					usernameSet.add(rs.getString(1));
 					}
 				String sql2 = "Select username, name FROM useraccounts";
 				PreparedStatement ps2 = connection.prepareStatement(sql2);
@@ -185,13 +182,17 @@ public class UserServicesDao {
 				while (rs2.next()) {
 					usernameName.put(rs2.getString(1), rs2.getString(2));
 				}
+			}catch(SQLException e){
+				e.printStackTrace();
+				}
+			
 				System.out.println("-----------------------------------------|");
 				System.out.println("Please enter your username:");
 				System.out.println("-----------------------------------------|");
 
 				String userNameEntry = ScannerUtil.getLine();
 			
-				if(usernameList.contains(userNameEntry)) {
+				if(usernameSet.contains(userNameEntry)) {
 					
 					
 					System.out.println("-----------------------------------------|");
@@ -209,14 +210,35 @@ public class UserServicesDao {
 						System.out.println("Login successful!  You will now be"); 
 						System.out.println("taken to your Accounts.");
 						System.out.println("-----------------------------------------|");
+						
+						loginSuccessful = true;
+						
 					}
 				
 					else {
-						System.out.println("-----------------------------------------|");
-						System.out.println("Username and password do not match.");
-						System.out.println("Please try again.");
-						System.out.println("-----------------------------------------|");
-					}
+						failedAttempt++;
+						if(failedAttempt == 3) {
+							System.out.println("-----------------------------------------|");
+							System.out.println("You have entered three failed attempts.");
+							System.out.println("For security purposes, you are being");
+							System.out.println("directed back to the Main Menu.");
+							System.out.println("\n");
+							System.out.println("If you've forgotten your username or password");
+							System.out.println("select the appropriate option to retrieve");
+							System.out.println("your login credentials.");
+							
+							loginSuccessful = false;
+							
+						}else 
+						{
+							System.out.println("-----------------------------------------|");
+							System.out.println("Username and password do not match.");
+							System.out.println("Please try again.");
+							System.out.println("-----------------------------------------|");
+							
+							
+						}
+					} 
 				}
 				else 
 				{
@@ -237,24 +259,15 @@ public class UserServicesDao {
 							break;
 						
 						default :
-							View view = new MainMenu();
-							while(view != null) {
-								view = view.printOptions();
-						}
-							;
+							loginSuccessful = false;
+							failedAttempt = 5;
+							break;
 					}
 					
 					
 				}
-			
-			}catch(SQLException e){
-				e.printStackTrace();
-				}
-			
-			
-			
 		}
-	
+		
 	}
 	
 	
@@ -279,16 +292,22 @@ public class UserServicesDao {
 				ResultSet rs2 = ps2.executeQuery();
 				while (rs2.next()) {
 					namePassword.put(rs2.getString(2), rs2.getString(1));
-					fullnameList.add(rs2.getString(2));
+					fullnameSet.add(rs2.getString(2));
+//					System.out.println(namePassword);
+//					System.out.println(fullnameSet);
+					}
+			}catch(SQLException e){
+				e.printStackTrace();
 				}
 						
+				
 				System.out.println("-----------------------------------------|");
 				System.out.println("Please enter your name:");
 				System.out.println("-----------------------------------------|");
 
 				String nameEntry = ScannerUtil.getLine();
 			
-				if(fullnameList.contains(nameEntry)) {
+				if(fullnameSet.contains(nameEntry)) {
 				
 					System.out.println("-----------------------------------------|");
 					System.out.println("Please enter your password:");
@@ -343,11 +362,8 @@ public class UserServicesDao {
 					
 					
 				}
-			}catch(SQLException e){
-				e.printStackTrace();
-				}
+			
 		}
-
 		
 	}
 
@@ -370,9 +386,11 @@ public class UserServicesDao {
 				ResultSet rs2 = ps2.executeQuery();
 				while (rs2.next()) {
 					usernameName.put(rs2.getString(2), rs2.getString(1));
-					fullnameList.add(rs2.getString(2));
-					
+					fullnameSet.add(rs2.getString(2));
 				}
+			}catch(SQLException e){
+				e.printStackTrace();
+				}	
 
 				System.out.println("-----------------------------------------|");
 				System.out.println("Please enter your name:");
@@ -380,7 +398,7 @@ public class UserServicesDao {
 
 				String nameEntry = ScannerUtil.getLine();				
 				
-				if(fullnameList.contains(nameEntry)) {
+				if(fullnameSet.contains(nameEntry)) {
 				
 
 					System.out.println("-----------------------------------------|");
@@ -442,11 +460,9 @@ public class UserServicesDao {
 					}
 			
 			
-			}catch(SQLException e){
-				e.printStackTrace();
+			
 				}
 		}
-	}
 	
 	
 	

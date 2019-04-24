@@ -38,9 +38,13 @@ public class AccountView implements View {
 				int accountNum = rs.getInt(1);
 				BigDecimal balance = rs.getBigDecimal(2);
 				System.out.println("-----------------------------------------|");
-				System.out.println("Account# " + accountNum + "|" + "Balance: " + balance);
+				System.out.println("Account# " + accountNum + "    |" + "Balance: " + balance);
 				System.out.println("-----------------------------------------|");
 			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+
+		}
 
 			System.out.println("What would you like to do?");
 			System.out.println("-----------------------------------------|");
@@ -71,10 +75,7 @@ public class AccountView implements View {
 				};
 			
 			}
-		}catch (SQLException e) {
-			e.printStackTrace();
-
-		}
+		
 		
 		return null;
 	}

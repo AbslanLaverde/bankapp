@@ -90,8 +90,11 @@ public class AccountView implements View {
 					return new AccountView();
 					}
 					else {
+					System.out.println("-----------------------------------------------|");
 					System.out.println("In order to make a deposit");
-					System.out.println("please establish a new account.");
+					System.out.println("you must have an active account.");
+					System.out.println("-----------------------------------------------|");
+
 					UserDao.openAccount();
 					}
 					return new AccountView();
@@ -102,8 +105,11 @@ public class AccountView implements View {
 					return new AccountView();
 					}
 					else {
+					System.out.println("-----------------------------------------------|");
 					System.out.println("In order to make a withdrawal");
 					System.out.println("you must have an active account.");
+					System.out.println("-----------------------------------------------|");
+
 					UserDao.openAccount();
 					}
 					return new AccountView();
@@ -114,9 +120,12 @@ public class AccountView implements View {
 					return new AccountView();
 					}
 					else {
+					System.out.println("-----------------------------------------------|");
 					System.out.println("In order to transfer money");
-					System.out.println("between accounts, please");
-					System.out.println("establish a new account.");
+					System.out.println("between accounts, you must");
+					System.out.println("have an active account.");
+					System.out.println("-----------------------------------------------|");
+
 					UserDao.openAccount();
 					}
 					return new AccountView();

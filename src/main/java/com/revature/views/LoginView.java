@@ -10,14 +10,14 @@ public class LoginView implements View {
 	
 	
 	public View printOptions() {
-		System.out.println("-----------------------------------------|");
+		System.out.println("-----------------------------------------------|");
 		System.out.println("Login to your account!");
 		System.out.println("To start...");
-		System.out.println("-----------------------------------------|");
+		System.out.println("-----------------------------------------------|");
 		System.out.println("1. Enter your Login information!");
 		System.out.println("2. Forgot Username or Password?");
 		System.out.println("0. Back");
-		System.out.println("-----------------------------------------|");
+		System.out.println("-----------------------------------------------|");
 
 		int selection = ScannerUtil.getNumericChoice(2);
 

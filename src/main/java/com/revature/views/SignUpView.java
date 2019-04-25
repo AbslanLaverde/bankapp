@@ -8,13 +8,14 @@ public class SignUpView implements View {
 	UserServicesDao userService = new UserServicesDao();
 
 	public View printOptions() {
-		System.out.println("-----------------------------------------|");
-		System.out.println("Thank you for choosing X(factor) United, N.A!");
+		System.out.println("-----------------------------------------------|");
+		System.out.println("Thank you for choosing");
+		System.out.println("X(factor) United, N.A!");
 		System.out.println("To start...");
-		System.out.println("-----------------------------------------|");
+		System.out.println("-----------------------------------------------|");
 		System.out.println("1. Create User");
 		System.out.println("0. Back");
-		System.out.println("-----------------------------------------|");
+		System.out.println("-----------------------------------------------|");
 
 		int selection = ScannerUtil.getNumericChoice(1);
 

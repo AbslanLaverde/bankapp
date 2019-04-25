@@ -23,11 +23,17 @@ public class RecoveryView implements View {
 		switch(selection) {
 		case 1:
 			UserServicesDao.retrieveUsername();
-			return new LoginView();
-		case 2: 
+			if(!UserServicesDao.loginSuccessful) {
+				return new MainMenu();
+			}else if(UserServicesDao.loginSuccessful){
+				return new LoginView();
+			}		case 2: 
 			UserServicesDao.retrievePassword();
-			return new LoginView();
-		default: return null;
+			if(!UserServicesDao.loginSuccessful) {
+				return new MainMenu();
+			}else if(UserServicesDao.loginSuccessful){
+				return new LoginView();}
+			default: return null;
 		}
 	}
 

@@ -84,18 +84,22 @@ public class UserDao {
 				System.out.println("You will now be taken back to your account summary.");
 				break;
 				
+				
+				
 			case 2: //joint account opening confimation
 				
 				System.out.println("To open a joint account, both account owners"); 
 				System.out.println("must have access to our online service.");
-				System.out.println("Please return to the Main Menu and select");
-				System.out.println("\"Sign up for an Online Account!\" if necessary");
-				System.out.println("by entering 0 now.  Otherwise, enter 1 to begin");
+				System.out.println("If the Secondary Account Holder does not");
+				System.out.println("does not have access to our Online service,");
+				System.out.println("return to the Account Summary page and select");
+				System.out.println("0 to Sign Out and create a new Online Account");
+				System.out.println("for the Secondary Account Holder.  Otherwise, enter 1 to begin");
 				System.out.println("account opening for a joint account!");
 				
 				System.out.println("-----------------------------------------|");
 				System.out.println("1. Create Joint Account");
-				System.out.println("0. Return to Main Menu.");
+				System.out.println("0. Return to Account Summary Page.");
 				System.out.println("-----------------------------------------|");
 				
 				int selection2 = ScannerUtil.getNumericChoice(1);
@@ -107,11 +111,11 @@ public class UserDao {
 						System.out.println("You are currently logged in as " + UserServicesDao.usernameview +".");
 						System.out.println("This user will be designated as the Primary Account Holder.");
 						
-						
+						int loopBreaker = 0;
 						Boolean userExists = false;
 						String secondaryOwner = "";
 						
-						while(!userExists) {
+						while((!userExists)&&(loopBreaker==0)) {
 							System.out.println("-----------------------------------------|");
 							System.out.println("Please enter the username of the Secondary Account Holder:");
 							System.out.println("-----------------------------------------|");
@@ -124,11 +128,11 @@ public class UserDao {
 								while (rs.next()) {
 									secondaryList.add(rs.getString(1));
 									secondaryList.add(rs.getString(1).toLowerCase());
-								}
-							}catch(SQLException e) {
-								e.printStackTrace();
-							}
-								if(!secondaryOwnerEntry.equals(UserServicesDao.usernameview)) {
+									}
+								}catch(SQLException e) {
+									e.printStackTrace();
+									}
+							if(!secondaryOwnerEntry.equals(UserServicesDao.usernameview)) {
 									
 									if(!(secondaryList.contains(secondaryOwnerEntry))) {
 										System.out.println("-----------------------------------------|");
@@ -141,17 +145,12 @@ public class UserDao {
 										int selection3 = ScannerUtil.getNumericChoice(1);
 									
 										switch(selection3) {
-											case 1: //re-enter username
-												System.out.println("");
+											case 1:
 												break;
 											case 0: //return to main menu
-												View view = new MainMenu();
-												
-												while(view != null) {
-													view = view.printOptions();
+												loopBreaker = 1;;
+												break;
 												}
-									
-										}
 
 									}
 									else 
@@ -168,17 +167,46 @@ public class UserDao {
 								}
 							
 						}
-
+						//out of while loop
+						//This is where the method will take place to create the joint account.
+						int accountNumberJ = 0;
+						double initialDepositJ = 0;
 						
-						System.out.println(secondaryOwner);
+						System.out.println("Here at X(factor)United, we're proud to"); 
+						System.out.println("offer high interest rates on all of our accounts!");
+						System.out.println("To immediately take advantage of these rates and"); 
+						System.out.println("start earning, we recommend an initial deposit of $100.");
+						System.out.println("Please enter the amount of your inital deposit to open your account:");
+						
+						initialDepositJ += Double.parseDouble(ScannerUtil.getLine());
+						
+						try(Connection connection = ConnectionUtil.getConnection()){
+							String sql = "insert into bankaccounts (balance) values ("+initialDepositJ+") returning accountnumber;";
+							PreparedStatement ps = connection.prepareStatement(sql);
+							ResultSet rs = ps.executeQuery();
+							while(rs.next()) {
+								accountNumberJ += rs.getInt(1);
+								}
+							String sql2 = "insert into usertobank (username, accounts) values ('" + UserServicesDao.usernameview + "', " + accountNumberJ + "), ('" + secondaryOwner + "', " + accountNumberJ + ");";
+							PreparedStatement ps2 = connection.prepareStatement(sql2);
+							ps2.executeQuery();
+							
+
+							
+						}catch (SQLException e) {
+							
+						}
+//						
+						System.out.println("Your account has been opened!");
+						System.out.println("You will now be taken back to your account summary.");
+						
 						break;
 						
-					case 0: //return to main menu from joint account opening confirmation
-						View view = new MainMenu();
 						
-						while(view != null) {
-							view = view.printOptions();
-						}
+						
+						
+					case 0: //return to main menu from joint account opening confirmation
+						return;
 				}
 				
 				

@@ -1,12 +1,15 @@
 package com.revature.daos;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import com.revature.util.ScannerUtil;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.revature.views.*;
 import com.revature.beans.User;
@@ -221,7 +224,94 @@ public class UserDao {
 	}
 	
 	public static void makeDeposit() {
-		System.out.println("Make deposit methods.");
+		
+		int accountNumberSel = 0;
+		Set<Integer> availAccounts = new HashSet<>();
+		Boolean accountExists = false;
+		Boolean depositEntered = false;
+		Double depositAmount = 0.00;
+		
+		System.out.println("-----------------------------------------------|");
+		System.out.println("Here is a list of your active accounts:");
+		System.out.println("-----------------------------------------------|");
+
+		try(Connection connection = ConnectionUtil.getConnection()){
+			String sql = "select accountnumber, balance\r\n" + 
+				"from usertobank join bankaccounts\r\n" + 
+				"on usertobank.accounts = accountnumber\r\n" + 
+				"where username = ?;";
+			PreparedStatement ps = connection.prepareStatement(sql);
+		
+			ps.setString(1, UserServicesDao.usernameview);
+		
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				availAccounts.add(rs.getInt(1));
+				int accountNum = rs.getInt(1);
+				BigDecimal balance = rs.getBigDecimal(2);
+				System.out.println("-----------------------------------------------|");
+				System.out.println("Account# " + accountNum + "    |" + "Balance: " + balance);
+				System.out.println("-----------------------------------------------|");
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+			}
+		
+		while(!accountExists) {
+			System.out.println("Enter the account number in which");
+			System.out.println("you would like to make a deposit:");
+		
+			int accountNumberSelEntry = 0;
+		
+			try {
+				accountNumberSelEntry =Integer.parseInt(ScannerUtil.getLine());
+				if(!availAccounts.contains(accountNumberSelEntry)) {
+					System.out.println("Invalid Account Number");
+				}
+				else {
+					accountNumberSel += accountNumberSelEntry;
+					accountExists = true;
+				}
+			}catch(NumberFormatException e) {
+				System.out.println("Invalid entry.");
+				}
+		}
+
+		while(!depositEntered) {
+			System.out.println("Enter deposit amount: ");
+		
+			try {
+				
+				depositAmount += Double.parseDouble(ScannerUtil.getLine());
+				
+				if(depositAmount<=0) {
+					System.out.println("Enter a deposit amount greater than 0.");
+					depositAmount = 0.00;
+				}
+				
+				else{depositEntered = true;}
+				
+			}catch(NumberFormatException e) {
+				System.out.println("Invalid entry.");
+			}
+	
+		}
+		
+		try(Connection connection = ConnectionUtil.getConnection()){
+			String sql = "update bankaccounts set balance = balance + ? where accountnumber = ?;";
+			PreparedStatement ps = connection.prepareStatement(sql);
+		
+			ps.setDouble(1, depositAmount);
+			ps.setInt(2, accountNumberSel);
+			ps.executeUpdate();
+		
+		}catch (SQLException e) {
+			e.printStackTrace();
+			}
+		
+		
+		
+		
 	}
 	
 	public static void makeWithdrawal() {

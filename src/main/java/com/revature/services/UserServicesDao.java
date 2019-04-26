@@ -41,14 +41,28 @@ public class UserServicesDao {
 		String fullName = "";
 		int failedAttempt = 0;
 		String fullNameEntry = "";
+		Boolean nameCheckBool = false;
 		
+		while(!nameCheckBool) {	
+			System.out.println("-----------------------------------------------|");
+			System.out.println("Please enter your first and last name: " );
+			System.out.println("-----------------------------------------------|");
 		
-		System.out.println("-----------------------------------------------|");
-		System.out.println("Please enter your first and last name: " );
-		System.out.println("-----------------------------------------------|");
+			String nameCheck = ScannerUtil.getLine();
 		
-		fullNameEntry += ScannerUtil.getLine();
-		
+			if(nameCheck.isEmpty()) {
+			
+				System.out.println("A valid name entry is required.");
+			
+			}
+			else {
+			
+				fullNameEntry += nameCheck;
+				nameCheckBool = true;
+			}
+				
+		}
+//		fullNameEntry += ScannerUtil.getLine();
 		while((!nameExists) && (failedAttempt==0)) {
 			try(Connection connection = ConnectionUtil.getConnection()){
 				String sql3 = "Select name FROM useraccounts";
@@ -72,21 +86,19 @@ public class UserServicesDao {
 					
 					loginSuccessful = false;
 					failedAttempt = 1;
-					
-					
-					
+						
 				}
 				else {
 					fullName += fullNameEntry;
 					nameExists = true;
 				}
-		
-
 		}
 		
 //		Username
 		Boolean userExists = false;
 		String userName = "";
+		String userNameEntry = "";
+		Boolean userNameCheckBool = false;
 		
 		while((!userExists)&&(nameExists==true)) {
 			System.out.println("-----------------------------------------------|");
@@ -94,9 +106,28 @@ public class UserServicesDao {
 			System.out.println("with your accounts: ");
 			System.out.println("**Usernames are case-sensitive**");
 			System.out.println("-----------------------------------------------|");
-			String userNameEntry = ScannerUtil.getLine();
+//			String userNameEntry = ScannerUtil.getLine();
 		
-			try(Connection connection = ConnectionUtil.getConnection()){
+			
+			
+			while(!userNameCheckBool) {
+			String userNameCheck = ScannerUtil.getLine();
+			
+			
+			if(userNameCheck.isEmpty()) {
+				
+				System.out.println("A valid username entry is required.");
+			
+			}
+			else {
+			
+				userNameEntry += userNameCheck;
+				userNameCheckBool = true;
+			}
+			}
+		
+			
+		try(Connection connection = ConnectionUtil.getConnection()){
 				String sql = "SELECT username FROM useraccounts";
 				PreparedStatement ps = connection.prepareStatement(sql);
 				ResultSet rs = ps.executeQuery();
@@ -104,17 +135,19 @@ public class UserServicesDao {
 					usernameSet.add(rs.getString(1));
 					usernameSet.add(rs.getString(1).toLowerCase());
 				}
-			}catch(SQLException e) {
+		}catch(SQLException e) {
 				e.printStackTrace();
 			}
 				
-				if(usernameSet.contains(userNameEntry)) {
+			if(usernameSet.contains(userNameEntry)) {
 					System.out.println("-----------------------------------------------|");
 					System.out.println("That username is unavailable.  Please try again!");	
 					System.out.println("-----------------------------------------------|");
-
+					
+					userNameCheckBool = false;
+					
 				}
-				else 
+			else 
 				{
 					userName += userNameEntry;
 					userExists = true;
@@ -126,13 +159,33 @@ public class UserServicesDao {
 //		Password
 		Boolean passMatch = false;
 		String password = "";
-
+		String passwordEntry = "";
+		Boolean passwordCheckBool = false;
+		
+		
 		while((!passMatch) && (userExists==true)) {
+		
 			System.out.println("-----------------------------------------------|");
 			System.out.println("Please enter a password: ");
 			System.out.println("-----------------------------------------------|");
-			String passwordEntry = ScannerUtil.getLine();
-
+			
+			
+		while(!passwordCheckBool) {
+			String passwordCheck = ScannerUtil.getLine();
+				
+				
+			if(passwordCheck.isEmpty()) {
+					
+				System.out.println("A valid password entry is required.");
+				
+			}
+			else {
+				
+				passwordEntry += passwordCheck;
+				passwordCheckBool = true;
+			}
+		}
+			
 			System.out.println("-----------------------------------------------|");
 			System.out.println("Please re-enter your password: ");
 			System.out.println("-----------------------------------------------|");
@@ -160,7 +213,10 @@ public class UserServicesDao {
 				System.out.println("The passwords you entered do not match.");
 				System.out.println("Please try again!");
 				System.out.println("-----------------------------------------------|");
-
+				
+				passwordEntry = "";
+				passwordCheckBool = false;
+				
 				}
 			
 		}

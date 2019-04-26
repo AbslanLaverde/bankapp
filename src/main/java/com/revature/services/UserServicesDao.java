@@ -40,11 +40,14 @@ public class UserServicesDao {
 		Boolean nameExists = false;
 		String fullName = "";
 		int failedAttempt = 0;
+		String fullNameEntry = "";
+		
 		
 		System.out.println("-----------------------------------------------|");
 		System.out.println("Please enter your first and last name: " );
 		System.out.println("-----------------------------------------------|");
-		String fullNameEntry = ScannerUtil.getLine();
+		
+		fullNameEntry += ScannerUtil.getLine();
 		
 		while((!nameExists) && (failedAttempt==0)) {
 			try(Connection connection = ConnectionUtil.getConnection()){
@@ -77,9 +80,10 @@ public class UserServicesDao {
 					fullName += fullNameEntry;
 					nameExists = true;
 				}
+		
+
 		}
-
-
+		
 //		Username
 		Boolean userExists = false;
 		String userName = "";
@@ -91,7 +95,7 @@ public class UserServicesDao {
 			System.out.println("**Usernames are case-sensitive**");
 			System.out.println("-----------------------------------------------|");
 			String userNameEntry = ScannerUtil.getLine();
-
+		
 			try(Connection connection = ConnectionUtil.getConnection()){
 				String sql = "SELECT username FROM useraccounts";
 				PreparedStatement ps = connection.prepareStatement(sql);

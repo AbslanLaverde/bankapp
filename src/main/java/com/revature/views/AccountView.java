@@ -63,11 +63,12 @@ public class AccountView implements View {
 				System.out.println("-----------------------------------------------|");
 				System.out.println("Welcome " + UserServicesDao.userview +"!");
 				System.out.println("You currently have no accounts");
-				System.out.println("with out banks.  Please select option 1");
+				System.out.println("with our bank.  Please select option 1");
 				System.out.println("to open your first X(factor) Bank account!");
 				System.out.println("-----------------------------------------------|");
 
 			}
+			System.out.println("-----------------------------------------------|");
 			System.out.println("What would you like to do?");
 			System.out.println("-----------------------------------------------|");
 			System.out.println("1. Open a new account.");

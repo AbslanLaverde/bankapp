@@ -50,9 +50,13 @@ public class UserServicesDao {
 		
 			String nameCheck = ScannerUtil.getLine();
 		
-			if(nameCheck.isEmpty()) {
-			
+			if(nameCheck.isEmpty()||nameCheck.startsWith(" ")) {
+
+				System.out.println("-----------------------------------------------|");
 				System.out.println("A valid name entry is required.");
+				System.out.println("-----------------------------------------------|");
+
+				
 			
 			}
 			else {
@@ -114,9 +118,16 @@ public class UserServicesDao {
 			String userNameCheck = ScannerUtil.getLine();
 			
 			
-			if(userNameCheck.isEmpty()) {
+			if(userNameCheck.isEmpty()||userNameCheck.startsWith(" ")) {
 				
+				System.out.println("-----------------------------------------------|");
 				System.out.println("A valid username entry is required.");
+				System.out.println("-----------------------------------------------|");
+				System.out.println("-----------------------------------------------|");
+				System.out.println("Please enter a username to associate"); 
+				System.out.println("with your accounts: ");
+				System.out.println("**Usernames are case-sensitive**");
+				System.out.println("-----------------------------------------------|");
 			
 			}
 			else {
@@ -174,9 +185,12 @@ public class UserServicesDao {
 			String passwordCheck = ScannerUtil.getLine();
 				
 				
-			if(passwordCheck.isEmpty()) {
-					
+			if(passwordCheck.isEmpty()||passwordCheck.startsWith(" ")) {
+				
+				System.out.println("-----------------------------------------------|");
 				System.out.println("A valid password entry is required.");
+				System.out.println("-----------------------------------------------|");
+
 				
 			}
 			else {
@@ -284,6 +298,8 @@ public class UserServicesDao {
 				
 					else {
 						failedAttempt++;
+						
+						
 						if(failedAttempt == 3) {
 							System.out.println("-----------------------------------------------|");
 							System.out.println("You have entered three failed attempts.");
@@ -428,10 +444,10 @@ public class UserServicesDao {
 					}
 				}
 				else {
-				
+					
+					System.out.println("-----------------------------------------------|");
 					System.out.println("That name is not associated with a ");
 					System.out.println("user profile.");
-					
 					System.out.println("-----------------------------------------------|");
 					System.out.println("1. Enter 1 to try again.");
 					System.out.println("0. Return to Main Menu and ");
@@ -511,7 +527,7 @@ public class UserServicesDao {
 						System.out.println("Please choose the option to enter your login");
 						System.out.println("information and use the password provided.");;
 						System.out.println("-----------------------------------------------|");
-						
+						nameUserMatch = true;
 						loginSuccessful = true;
 					}
 				

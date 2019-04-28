@@ -118,9 +118,11 @@ public class UserDao {
 				}catch (SQLException e) {
 					
 				}
-			
+				System.out.println("-----------------------------------------------|");
 				System.out.println("Your account has been opened!");
 				System.out.println("You will now be taken back to your account summary.");
+				System.out.println("-----------------------------------------------|");
+
 				break;
 				
 				
@@ -138,10 +140,10 @@ public class UserDao {
 				System.out.println("enter 1 to begin account opening!");
 				System.out.println("-----------------------------------------------|");
 				
-				System.out.println("-----------------------------------------|");
+				System.out.println("-----------------------------------------------|");
 				System.out.println("1. Create Joint Account");
 				System.out.println("0. Return to Account Summary Page.");
-				System.out.println("-----------------------------------------|");
+				System.out.println("-----------------------------------------------|");
 				
 				int selection2 = ScannerUtil.getNumericChoice(1);
 			
@@ -160,6 +162,7 @@ public class UserDao {
 						int loopBreaker = 0;
 						Boolean userExists = false;
 						String secondaryOwner = "";
+						Boolean secondaryOwnerSuccessful = false;
 						
 						while((!userExists)&&(loopBreaker==0)) {
 							System.out.println("-----------------------------------------------|");
@@ -182,12 +185,12 @@ public class UserDao {
 							if(!secondaryOwnerEntry.equals(UserServicesDao.usernameview)) {
 									
 									if(!(secondaryList.contains(secondaryOwnerEntry))) {
-										System.out.println("-----------------------------------------|");
+										System.out.println("-----------------------------------------------|");
 										System.out.println("That username is not associated to a User Account.");
 										System.out.println("If you need to return to the Main Menu and sign up");
 										System.out.println("for a user account, please enter 0.");
 										System.out.println("Otherwise, enter 1 to try again:");
-										System.out.println("-----------------------------------------|");
+										System.out.println("-----------------------------------------------|");
 									
 										int selection3 = ScannerUtil.getNumericChoice(1);
 									
@@ -204,6 +207,7 @@ public class UserDao {
 									{
 										secondaryOwner += secondaryOwnerEntry;
 										userExists = true;
+										secondaryOwnerSuccessful = true;
 									}
 								}
 								else 
@@ -218,6 +222,8 @@ public class UserDao {
 						}
 						//out of while loop
 						//This is where the method will take place to create the joint account.
+						
+						if(secondaryOwnerSuccessful) {
 						int accountNumberJ = 0;
 						Double initialDepositJ = 0.00;
 						Boolean depositCorrectJ = false;
@@ -284,7 +290,9 @@ public class UserDao {
 						System.out.println("-----------------------------------------------|");
 
 						break;
-						
+						}else {
+							break;
+						}
 						
 						
 						
@@ -856,10 +864,10 @@ public class UserDao {
 			Boolean transactionGood = false;
 			
 			while((!userExists)&&(loopBreaker==0)) {
-				System.out.println("-----------------------------------------|");
+				System.out.println("-----------------------------------------------|");
 				System.out.println("Please enter the username associated with");
 				System.out.println("the account you would like to transfer funds to:");
-				System.out.println("-----------------------------------------|");
+				System.out.println("-----------------------------------------------|");
 				String secondaryOwnerEntry = ScannerUtil.getLine();
 
 				try(Connection connection = ConnectionUtil.getConnection()){
@@ -876,12 +884,12 @@ public class UserDao {
 				if(!secondaryOwnerEntry.equals(UserServicesDao.usernameview)) {
 						
 						if(!(secondaryList.contains(secondaryOwnerEntry))) {
-							System.out.println("-----------------------------------------|");
+							System.out.println("-----------------------------------------------|");
 							System.out.println("That username is not associated to a User Account.");
 							System.out.println("If you do not have the recipient's username");
 							System.out.println("to complete the transfer, please enter 0.");
 							System.out.println("Otherwise, enter 1 to try again:");
-							System.out.println("-----------------------------------------|");
+							System.out.println("-----------------------------------------------|");
 						
 							int selection3 = ScannerUtil.getNumericChoice(1);
 						
@@ -908,7 +916,7 @@ public class UserDao {
 						System.out.println("not available through this feature.");
 						System.out.println("-----------------------------------------------|");
 						System.out.println("If you'd like to transfer to a personal account");
-						System.out.println("enter 0 now and choose the appropriate options.");
+						System.out.println("enter 0 now and choose the appropriate options");
 						System.out.println("in the following menus.");
 						System.out.println("Otherwise, press 1 to enter the recipient's username.");
 						System.out.println("-----------------------------------------------|");
@@ -927,90 +935,114 @@ public class UserDao {
 			}
 			
 			if(transactionGood) {			
-			int accountNumberSelD2 = 0;
-			Set<Integer> availAccountsD2 = new HashSet<>();
-			Boolean accountExistsD2 = false;
+				int accountNumberSelD2 = 0;
+				Set<Integer> availAccountsD2 = new HashSet<>();
+				Boolean accountExistsD2 = false;
+				Boolean transactionGood2 = false;
+				int loopBreaker2 = 0;
 
-			try(Connection connection = ConnectionUtil.getConnection()){
-				String sqlD2 = "select accountnumber, balance\r\n" + 
-					"from usertobank join bankaccounts\r\n" + 
-					"on usertobank.accounts = accountnumber\r\n" + 
-					"where username = ?;";
-				PreparedStatement psD2 = connection.prepareStatement(sqlD2);
+				try(Connection connection = ConnectionUtil.getConnection()){
+					String sqlD2 = "select accountnumber, balance\r\n" + 
+							"from usertobank join bankaccounts\r\n" + 
+							"on usertobank.accounts = accountnumber\r\n" + 
+							"where username = ?;";
+					PreparedStatement psD2 = connection.prepareStatement(sqlD2);
 			
-				psD2.setString(1, secondaryOwner);
+					psD2.setString(1, secondaryOwner);
 			
-				ResultSet rsD2 = psD2.executeQuery();
-				while(rsD2.next()) {
-					availAccountsD2.add(rsD2.getInt(1));
-				}
-			}catch (SQLException e) {
-				e.printStackTrace();
-				}
-			
-			while(!accountExistsD2) {
-				System.out.println("-----------------------------------------------|");
-				System.out.println("Enter the account number in which");
-				System.out.println("you would like to transfer into:");
-				System.out.println("-----------------------------------------------|");
-
-			
-				int accountNumberSelEntryD2 = 0;
-			
-				try {
-					accountNumberSelEntryD2 =Integer.parseInt(ScannerUtil.getLine());
-					if(!availAccountsD2.contains(accountNumberSelEntryD2)) {
-						System.out.println("Invalid Account Number");
+					ResultSet rsD2 = psD2.executeQuery();
+					while(rsD2.next()) {
+						availAccountsD2.add(rsD2.getInt(1));
 					}
-					else {
-						accountNumberSelD2 += accountNumberSelEntryD2;
-						accountExistsD2 = true;
+				}catch (SQLException e) {
+					e.printStackTrace();
 					}
-				}catch(NumberFormatException e) {
-					System.out.println("-----------------------------------------------|");
-					System.out.println("Invalid entry.");
-					System.out.println("-----------------------------------------------|");
+			
+				while(!accountExistsD2) {
+					
+					
+					while(!transactionGood2&&loopBreaker2==0) {
+					
+						System.out.println("-----------------------------------------------|");
+						System.out.println("Enter the account number in which");
+						System.out.println("you would like to transfer into:");
+						System.out.println("-----------------------------------------------|");
 
+			
+						int accountNumberSelEntryD2 = 0;
+			
+						try {
+							accountNumberSelEntryD2 =Integer.parseInt(ScannerUtil.getLine());
+							if(!availAccountsD2.contains(accountNumberSelEntryD2)) {
+								System.out.println("-----------------------------------------------|");
+								System.out.println("Invalid Account Number");
+								System.out.println("-----------------------------------------------|");
+								System.out.println("If you don't have the correct account number");
+								System.out.println("enter 0 now to return to your Account Summary.");
+								System.out.println("Otherwise, enter 1 to try again:");
+								System.out.println("-----------------------------------------------|");
+							
+								int selection2 = ScannerUtil.getNumericChoice(1);
+							
+								switch(selection2) {
+								case 1 :break;
+								case 0 :loopBreaker2 = 1										;
+										accountExistsD2 = true;
+								}
+							
+							
+							}
+							else {
+								accountNumberSelD2 += accountNumberSelEntryD2;
+								accountExistsD2 = true;
+								transactionGood2 = true;
+							}
+						}catch(NumberFormatException e) {
+							System.out.println("-----------------------------------------------|");
+							System.out.println("Invalid entry.");
+							System.out.println("-----------------------------------------------|");
+						
+							}
 					}
-			}
-
-			
-			try(Connection connection = ConnectionUtil.getConnection()){
-				String sql = "update bankaccounts set balance = balance - ? where accountnumber = ?;";
-				PreparedStatement ps = connection.prepareStatement(sql);
-				
-				ps.setDouble(1, withdrawalAmount2);
-				ps.setInt(2, accountNumberSel2);
-				ps.executeUpdate();
-				
-				
-			}catch (SQLException e) {
-				e.printStackTrace();
-			}
-			
-			try(Connection connection = ConnectionUtil.getConnection()){
-				String sql = "update bankaccounts set balance = balance + ? where accountnumber = ?;";
-				PreparedStatement ps = connection.prepareStatement(sql);
-			
-				ps.setDouble(1, depositAmount2);
-				ps.setInt(2, accountNumberSelD2);
-				ps.executeUpdate();
-				System.out.println("-----------------------------------------------|");
-				System.out.println("Transfer successful!");
-				System.out.println("-----------------------------------------------|");
-
-				
-			}catch (SQLException e) {
-				e.printStackTrace();
 				}
+
+				if(transactionGood2) {
+					try(Connection connection = ConnectionUtil.getConnection()){
+						String sql = "update bankaccounts set balance = balance - ? where accountnumber = ?;";
+						PreparedStatement ps = connection.prepareStatement(sql);
+				
+						ps.setDouble(1, withdrawalAmount2);
+						ps.setInt(2, accountNumberSel2);
+						ps.executeUpdate();
+				
+				
+					}catch (SQLException e) {
+						e.printStackTrace();
+						}
+			
+					try(Connection connection = ConnectionUtil.getConnection()){
+						String sql = "update bankaccounts set balance = balance + ? where accountnumber = ?;";
+						PreparedStatement ps = connection.prepareStatement(sql);
+			
+						ps.setDouble(1, depositAmount2);
+						ps.setInt(2, accountNumberSelD2);
+						ps.executeUpdate();
+						System.out.println("-----------------------------------------------|");
+						System.out.println("Transfer successful!");
+						System.out.println("-----------------------------------------------|");
+
+				
+					}catch (SQLException e) {
+						e.printStackTrace();
+						}
+				}else {
+					break;
+				}
+					
+					
 			}else {
 				break;
-			}
-			
-			
-			
-			
-			;
+				}
 		default: 
 			break;
 		   }
